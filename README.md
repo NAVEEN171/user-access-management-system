@@ -1,6 +1,6 @@
 # User Management Access System
 
-A full-stack web application providing comprehensive user authentication, authorization, and software management capabilities. Built with React (TypeScript) frontend and Node.js backend with role-based access control.
+A full-stack web application providing comprehensive user authentication, authorization, and software management capabilities. Built with React (TypeScript,Tailwindcss) frontend and Node.js backend with role-based access control.
 
 ## 🛠️ Tech Stack
 
