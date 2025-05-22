@@ -35,7 +35,7 @@ A full-stack web application providing comprehensive user authentication, author
   - Protected routes and middleware
 
 - **Dashboard Management**
-  - Allows administrators to manage user access. Admins can:
+  - Allows managers to manage user access. Managers can:
   - View all access requests from users.
   - Approve or reject requests for specific software.
   - Monitor the list of users who have requested access.
