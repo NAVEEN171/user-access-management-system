@@ -163,6 +163,62 @@ router.post("/refresh-token", async (req, res) => {
   }
 });
 
+router.patch("/update-role/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
+    const validRoles = ["Admin", "Manager", "Employee"];
+
+    if (!role || !validRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: " invalid role",
+      });
+    }
+
+    const existingUser = await userRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    await userRepository.update({ id }, { role });
+
+    const updatedUser = await userRepository.findOne({
+      where: { id },
+      select: ["id", "username", "role"],
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "User role updated successfully",
+      data: {
+        user: updatedUser,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
 function generateAccessToken(user) {
   const { user: currentUser } = user;
   return jwt.sign(
