@@ -169,7 +169,7 @@ The application will be available at:
 - `GET /api/software/get-softwares` - Get all software entries
 - `POST /api/software/requests` - Submit software access request (Authenticated)
 - `GET /api/software/get-requests/:userId` - Get user-specific requests
-- `GET /api/software/get-requests` - Get all requests (Manager/Admin)
+- `GET /api/software/get-requests` - Get all requests 
 - `PATCH /api/software/requests/:id` - Update request status (Manager only)
 
 ## 🛣️ Frontend Routes
