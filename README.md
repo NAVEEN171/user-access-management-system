@@ -105,7 +105,7 @@ project-root/
 
 1. **Clone the repository**
    ```bash
-   [https://github.com/NAVEEN171/user-access-management-system](https://github.com/NAVEEN171/user-access-management-system)
+   https://github.com/NAVEEN171/user-access-management-system
    cd user-management-system
    ```
 
