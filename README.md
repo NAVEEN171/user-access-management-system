@@ -33,12 +33,12 @@ A full-stack web application providing comprehensive user authentication, author
   - JWT-based authentication with dual token system
   - Role-based access control
   - Protected routes and middleware
-  - Secure user profile retrieval
 
 - **Dashboard Management**
-  - User dashboard with personalized content
-  - Admin dashboard for user management
-  - Real-time data visualization
+  - Allows administrators to manage user access. Admins can:
+  - View all access requests from users.
+  - Approve or reject requests for specific software.
+  - Monitor the list of users who have requested access.
 
 - **Software Access Management**
   - Software creation and registration (Admin only)
