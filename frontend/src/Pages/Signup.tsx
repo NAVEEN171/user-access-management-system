@@ -16,6 +16,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +34,7 @@ const Signup = () => {
       toast.error("Name must be at least 5 characters ");
       return;
     }
+    setIsSubmitting(true);
     const backendURL = import.meta.env.VITE_BACKEND_URL;
 
     try {
@@ -62,6 +64,8 @@ const Signup = () => {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -134,8 +138,9 @@ const Signup = () => {
         <Button
           type="submit"
           className="w-full py-6 cursor-pointer bg-gray-900 hover:bg-black text-white rounded-lg font-medium mt-4"
+          disabled={isSubmitting}
         >
-          Create Account
+          {!isSubmitting ? "Create Account" : "Creating Account.."}
         </Button>
 
         <div className="text-center mt-6">

@@ -11,19 +11,21 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { useAuth } from "../contexts/AuthContext";
 
-// Mock Navbar component since we don't have the actual one
 import { Navbar } from "../components/Navbar/Navbar";
+import { Lock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const SoftwareCreation = () => {
   const [softwareName, setSoftwareName] = useState("");
   const [softwareDescription, setSoftwareDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { getCustomCookie, setCustomCookie, logout, user } = useAuth();
 
   const validateForm = () => {
     const errors = [];
 
-    // Check if fields are empty
     if (!softwareName.trim()) {
       errors.push("Software name is required");
     } else if (softwareName.trim().length < 4) {
@@ -41,6 +43,24 @@ const SoftwareCreation = () => {
 
     return errors;
   };
+  const createSoftwareRequest = async (accessToken: string) => {
+    const backendURL = import.meta.env.VITE_BACKEND_URL;
+
+    const response = await fetch(`${backendURL}/api/software/create-software`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        name: softwareName,
+        description: softwareDescription,
+        accessLevels: ["Read", "Write", "Admin"],
+      }),
+    });
+
+    return response;
+  };
 
   const handleSubmit = async () => {
     const validationErrors = validateForm();
@@ -53,14 +73,71 @@ const SoftwareCreation = () => {
     }
 
     setIsSubmitting(true);
-
     try {
-      toast.success("Software created successfully!");
+      const backendURL = import.meta.env.VITE_BACKEND_URL;
+      let accessToken = getCustomCookie("accessToken");
 
-      setSoftwareName("");
-      setSoftwareDescription("");
+      if (!accessToken) {
+        console.error("Login needed");
+        return;
+      }
+      setIsSubmitting(true);
+
+      let response = await createSoftwareRequest(accessToken);
+      let data = await response.json();
+
+      if (response.ok) {
+        console.log("Software created successfully:", data);
+        toast.success("Software created successfully!");
+      } else if (!getCustomCookie("refreshToken")) {
+        logout();
+        return;
+      } else if (
+        data?.code === "TOKEN_EXPIRED" &&
+        getCustomCookie("refreshToken")
+      ) {
+        const refreshToken = getCustomCookie("refreshToken");
+
+        const refreshResponse = await fetch(
+          `${backendURL}/api/auth/refresh-token`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${refreshToken}`,
+            },
+          }
+        );
+
+        if (!refreshResponse.ok) {
+          logout();
+          return;
+        }
+
+        const refreshData = await refreshResponse.json();
+        let accessToken = refreshData.accessToken;
+        setCustomCookie("accessToken", accessToken, null, true);
+
+        const retryResponse = await createSoftwareRequest(accessToken);
+        const retryData = await retryResponse.json();
+
+        if (retryResponse.ok) {
+          console.log(
+            "Software created successfully after token refresh:",
+            retryData
+          );
+          toast.success("Software created successfully!");
+        } else {
+          console.error(
+            "Failed to create software even after token refresh:",
+            retryData
+          );
+        }
+      } else {
+        console.error("Failed to create software:", data.message || data);
+      }
     } catch (error) {
-      toast.error("Failed to create software. Please try again.");
+      console.error("Error creating software:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -69,6 +146,64 @@ const SoftwareCreation = () => {
   const getWordCount = (text: string) => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 p-4">
+        <div className="max-w-md w-full text-center space-y-8 rounded-2xl bg-white p-8 shadow-lg">
+          <div className="flex justify-center">
+            <div className="bg-sky-100 p-4 rounded-full">
+              <Lock color="blue" className="h-12 w-12 " />
+            </div>
+          </div>
+
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900">
+            You need to be Admin and logged in to access this dashboard
+          </h1>
+
+          <div className="pt-2">
+            <Link to="/login">
+              <Button
+                className="w-full transition-all hover:shadow-md"
+                size="lg"
+              >
+                Login
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (user.role !== "Admin") {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 p-4">
+        <div className="max-w-md w-full text-center space-y-8 rounded-2xl bg-white p-8 shadow-lg">
+          <div className="flex justify-center">
+            <div className="bg-sky-100 p-4 rounded-full">
+              <Lock color="blue" className="h-12 w-12 " />
+            </div>
+          </div>
+
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900">
+            admin can access create software
+          </h1>
+
+          <div className="pt-2">
+            <Link to="/">
+              <Button
+                className="w-full transition-all hover:shadow-md"
+                size="lg"
+              >
+                Home
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

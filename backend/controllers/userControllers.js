@@ -3,8 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { AppDataSource } = require("../db/data-source");
 const { User } = require("../models/entities");
-const { authenticateToken } = require("../middlewares/Authenticate");
-const authorizeRole = require("../middlewares/Authorize");
 
 const router = Router();
 
@@ -174,7 +172,7 @@ function generateAccessToken(user) {
       role: currentUser.role,
     },
     process.env.JWT_ACCESS_SECRET,
-    { expiresIn: "2m" }
+    { expiresIn: "15m" }
   );
 }
 

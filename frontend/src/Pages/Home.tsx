@@ -27,6 +27,7 @@ interface Software {
   emoji?: string;
 }
 import { Laptop } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const { getCustomCookie, setCustomCookie, logout, fetchUserRequests } =
@@ -141,9 +142,11 @@ const Home = () => {
         </div>
 
         <div className="flex flex-col gap-4 sm:gap-6 ">
-          <Button className="flex gap-1 items-center w-fit mx-auto">
-            <Plus size={18}></Plus>Create Software
-          </Button>
+          <Link to="/create-software">
+            <Button className="flex gap-1 items-center w-fit mx-auto">
+              <Plus size={18}></Plus>Create Software
+            </Button>
+          </Link>
           {softwares.map((software) => (
             <div
               key={software.id}

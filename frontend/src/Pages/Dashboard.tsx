@@ -182,6 +182,9 @@ const Dashboard = () => {
         );
 
         setRequests(updatedRequests);
+      } else if (!getCustomCookie("refreshToken")) {
+        logout();
+        return;
       } else if (
         data?.code === "TOKEN_EXPIRED" &&
         getCustomCookie("refreshToken")
@@ -241,7 +244,7 @@ const Dashboard = () => {
           </div>
 
           <h1 className="text-xl font-semibold tracking-tight text-gray-900">
-            You need to Manager and login to access this dashboard
+            You need to be Manager and logged in to access this dashboard
           </h1>
 
           <div className="pt-2">
@@ -291,9 +294,9 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <header className="bg-blue-600 text-white py-4 px-6 shadow-lg">
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="container mx-auto flex flex-wrap gap-2  justify-between items-center">
           <h1 className="text-2xl font-bold">Software Dashboard</h1>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <div className="bg-blue-400 text-white bg-opacity-20 px-3 py-1 rounded-full text-sm flex items-center">
               <Calendar size={14} className="mr-2" />
               May 22, 2025
