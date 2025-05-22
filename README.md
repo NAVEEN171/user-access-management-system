@@ -5,7 +5,7 @@ A full-stack web application providing comprehensive user authentication, author
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 18** with TypeScript
+- **React 19** with TypeScript
 - **Vite** for build tooling
 - **React Router** for client-side routing
 - **tailwindcss** for styling
