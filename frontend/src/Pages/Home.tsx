@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { ArrowRight, Plus } from "lucide-react";
+import SoftwareCardLoader from "../components/loaders/SoftwareLoader";
 
 interface Software {
   id: string;
@@ -38,6 +39,7 @@ const Home = () => {
   const [selectedAccessLevel, setSelectedAccessLevel] = useState<string>("");
   const [currentSoftware, setCurrentSoftware] = useState<Software | null>(null);
   const [requestReason, setRequestReason] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleRequestClick = (software: Software) => {
     setCurrentSoftware(software);
@@ -108,6 +110,7 @@ const Home = () => {
   };
 
   const fetchSoftwares = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         "http://localhost:5000/api/software/get-softwares"
@@ -118,6 +121,8 @@ const Home = () => {
       }
     } catch (err) {
       console.log("Error fetching software data:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,44 +152,50 @@ const Home = () => {
               <Plus size={18}></Plus>Create Software
             </Button>
           </Link>
-          {softwares.map((software) => (
-            <div
-              key={software.id}
-              className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between hover:shadow-md hover:border-sky-500 transition-shadow"
-            >
-              <div className="flex items-start sm:items-center gap-2 w-full sm:w-auto mb-4 sm:mb-0">
-                <div className="bg-sky-50 p-2 rounded-lg text-3xl mr-3 sm:mr-6">
-                  <Laptop className="text-blue-500" size={22} />
-                </div>
-                <div className="flex flex-col">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
-                    {software.name}
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-500">
-                    {software.description}
-                  </p>
-                </div>
-              </div>
-              <div className="flex space-x-2 sm:space-x-3 w-full sm:w-auto justify-end">
-                <Button
-                  variant="outline"
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50 rounded-md px-4 sm:px-6 text-sm sm:text-base"
+          {!isLoading ? (
+            <div>
+              {softwares.map((software) => (
+                <div
+                  key={software.id}
+                  className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between hover:shadow-md hover:border-sky-500 transition-shadow"
                 >
-                  View
-                </Button>
-                <Button
-                  onClick={() => handleRequestClick(software)}
-                  className="bg-black text-white hover:bg-gray-800 leading-none gap-1 rounded-md px-4 sm:px-6 flex items-center text-sm sm:text-base"
-                >
-                  Request Access
-                  <ArrowRight
-                    className="text-white leading-none mt-1"
-                    size={16}
-                  />
-                </Button>
-              </div>
+                  <div className="flex items-start sm:items-center gap-2 w-full sm:w-auto mb-4 sm:mb-0">
+                    <div className="bg-sky-50 p-2 rounded-lg text-3xl mr-3 sm:mr-6">
+                      <Laptop className="text-blue-500" size={22} />
+                    </div>
+                    <div className="flex flex-col">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                        {software.name}
+                      </h3>
+                      <p className="text-sm sm:text-base text-gray-500">
+                        {software.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 sm:space-x-3 w-full sm:w-auto justify-end">
+                    <Button
+                      variant="outline"
+                      className="border-blue-300 text-blue-600 hover:bg-blue-50 rounded-md px-4 sm:px-6 text-sm sm:text-base"
+                    >
+                      View
+                    </Button>
+                    <Button
+                      onClick={() => handleRequestClick(software)}
+                      className="bg-black text-white hover:bg-gray-800 leading-none gap-1 rounded-md px-4 sm:px-6 flex items-center text-sm sm:text-base"
+                    >
+                      Request Access
+                      <ArrowRight
+                        className="text-white leading-none mt-1"
+                        size={16}
+                      />
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <SoftwareCardLoader />
+          )}
         </div>
 
         <Dialog open={isRequestOpen} onOpenChange={setIsRequestOpen}>
