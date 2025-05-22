@@ -8,6 +8,58 @@ const requestRepository = AppDataSource.getRepository(Request);
 const { authenticateToken } = require("../middlewares/Authenticate");
 const authorizeRole = require("../middlewares/Authorize");
 
+router.post("/create-software", async (req, res) => {
+  try {
+    const { name, description, accessLevels } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "Software name is required",
+      });
+    }
+
+    if (accessLevels && !Array.isArray(accessLevels)) {
+      return res.status(400).json({
+        success: false,
+        message: "Access levels must be an array",
+      });
+    }
+
+    const existingSoftware = await softwareRepository.findOne({
+      where: { name },
+    });
+
+    if (existingSoftware) {
+      return res.status(409).json({
+        success: false,
+        message: "Software with this name already exists",
+      });
+    }
+
+    const newSoftware = softwareRepository.create({
+      name,
+      description: description || "",
+      accessLevels: accessLevels || ["Write", "Read", "Admin"],
+    });
+
+    const savedSoftware = await softwareRepository.save(newSoftware);
+
+    return res.status(201).json({
+      success: true,
+      message: "Software created successfully",
+      data: savedSoftware,
+    });
+  } catch (error) {
+    console.error("Error creating software:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+});
+
 router.post("/requests", authenticateToken, async (req, res) => {
   try {
     const { softwareId, reason, accessType } = req.body;
