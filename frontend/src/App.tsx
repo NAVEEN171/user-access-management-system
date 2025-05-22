@@ -7,6 +7,7 @@ import Dashboard from "./Pages/Dashboard";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./App.css";
+import SoftwareCreation from "./Pages/Software";
 
 function App() {
   return (
@@ -20,8 +21,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
-
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/create-software" element={<SoftwareCreation />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

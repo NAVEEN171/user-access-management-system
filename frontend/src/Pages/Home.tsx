@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 
 interface Software {
   id: string;
@@ -140,7 +140,10 @@ const Home = () => {
           </p>
         </div>
 
-        <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="flex flex-col gap-4 sm:gap-6 ">
+          <Button className="flex gap-1 items-center w-fit mx-auto">
+            <Plus size={18}></Plus>Create Software
+          </Button>
           {softwares.map((software) => (
             <div
               key={software.id}
