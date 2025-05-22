@@ -162,6 +162,16 @@ The application will be available at:
 - `POST /api/auth/refresh-token` - Refresh JWT access token
 - `GET /api/auth/get-user/:id` - Get user by ID
 
+### Testing
+- `PATCH /api/auth/update-role/:id` - update user role by ID for testing
+### Request Body Example
+
+```json
+{
+  "role": "Manager"
+}
+
+
 
 
 ### Software Management
